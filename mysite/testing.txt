@@ -1,0 +1,60 @@
+When you run your tests, the default behavior of the test utility is to find all the test cases (that is, subclasses of 
+unittest.TestCase) in any file whose name begins with test, automatically build a test suite out of those test cases, and run that suite.
+
+File name should start with test like test_models.py, test_views.py, test_forms.py, etc
+
+Run the testcase:
+python manage.py test
+By default, this will discover tests in any file named “test*.py” under the current working directory.
+
+
+# Run all the tests in the animals.tests module
+$ ./manage.py test animals.tests
+
+# Run all the tests found within the 'animals' package
+$ ./manage.py test animals
+
+# Run just one test case
+$ ./manage.py test animals.tests.AnimalTestCase
+
+# Run just one test method
+$ ./manage.py test animals.tests.AnimalTestCase.test_animals_can_speak
+
+You can also provide a path to a directory to discover tests below that directory:
+
+$ ./manage.py test animals/
+
+You can specify a custom filename pattern match using the -p (or --pattern) option, if your test files are named differently from the test*.py pattern:
+
+$ ./manage.py test --pattern="tests_*.py"
+
+
+# TestClient
+
+1. get(path, data=None, follow=False, secure=False, **extra):
+c = Client()
+c.get('/customers/details/', {'name': 'fred', 'age': 7})
+
+Will result in the evaluation of a GET request equivalent to:
+/customers/details/?name=fred&age=7
+
+ c.get('/customers/details/?name=fred&age=7')
+ If you provide a URL with both an encoded GET data and a data argument, the data argument will take precedence.
+ f you set follow to True the client will follow any redirects and a redirect_chain attribute will be set in the response object containing tuples of the intermediate urls and status codes.
+If you set secure to True the client will emulate an HTTPS request.
+If you had a URL /redirect_me/ that redirected to /next/, that redirected to /final/, this is what you’d see:
+
+response = c.get('/redirect_me/', follow=True)
+response.redirect_chain
+[('http://testserver/next/', 302), ('http://testserver/final/', 302)]
+
+ 
+2. post(path, data=None, content_type=MULTIPART_CONTENT, follow=False, secure=False, **extra):
+content_type = application/json, the data is serialized using json.dumps()
+content_type = multipart/form-data (default)
+c.post('/login/?visitor=true', {'username': 'fred', 'password': 'secret'})
+this request could interrogate request.POST to retrieve the username and password, and could interrogate request.GET to determine 
+if the user was a visitor.
+
+
+3. 

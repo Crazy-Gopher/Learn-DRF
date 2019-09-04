@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package protos;
+
+import "google/protobuf/struct.proto";
+
+service UserService {
+    rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse) {
+    }
+    
+    rpc GetUser (GetUserRequest) returns (GetUserResponse) {
+    }
+}
+
+message HealthCheckRequest {
+}
+message HealthCheckResponse {
+    string msg = 1;
+}
+
+
+message GetUserRequest {
+	string username = 1;
+	string user_id = 2;
+	string email = 3;
+
+}
+message GetUserResponse {
+	string error = 1;
+    google.protobuf.Struct user = 2;
+}

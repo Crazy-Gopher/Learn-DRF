@@ -1,0 +1,393 @@
+## install
+1. pip install grpcio
+2. pip install grpcio-tools
+
+## Comment in .proto file:
+1. Single line comment // comment text
+2. Multi-line comment  /* multi-line comment text */
+
+## Generate Proto File:
+1. Go to the path where the file is present and run the below command
+python -m grpc.tools.protoc -I. --python_out=. --grpc_python_out=. user.proto
+2. Specify the path in the below command(replace dot(.) with path) and run in from anywhere
+python -m grpc.tools.protoc -I C:\Users\kapil_jain\Psl-Django\mysite\polls\protos --python_out=C:\Users\kapil_jain\Psl-Django\mysite\polls\protos --grpc_python_out=C:\Users\kapil_jain\Psl-Django\mysite\polls\protos user.proto
+
+
+
+## GRPC with Django
+1. install django-grpc
+pip install django-grpc
+
+# https://github.com/gluk-w/django-grpc
+
+
+GRPC:
+from google.protobuf.timestamp_pb2 import Timestamp
+from google.protobuf.wrappers_pb2 import UInt64Value
+from google.protobuf.wrappers_pb2 import StringValue
+grpc_services.py
+import grpc
+from google.protobuf.timestamp_pb2 import Timestamp
+def unix_to_proto(unix):
+    fraction, whole = math.modf(unix)
+    return Timestamp(seconds=int(whole), nanos=int(round(fraction * 1e9)))
+def insight_grpc_connect():
+    global insight_grpc_channel, insight_stub
+    insight_grpc_channel = grpc.insecure_channel(INSIGHT_SVC_HOST, options=[
+        ('grpc.min_reconnect_backoff_ms', 100),
+        ('grpc.max_reconnect_backoff_ms', 100),
+    ])
+    insight_stub = Insight_pb2_grpc.InsightServiceStub(insight_grpc_channel)
+def listing_stats(listing_ids, start_unix, end_unix):
+    response = None
+    iteration = 0
+    while iteration < INSIGHT_SVC_TRIES:
+        try:
+            req = Insight_pb2.ListingStatsRequest(
+                listing_ids=listing_ids,
+                start_time=unix_to_proto(start_unix),
+                end_time=unix_to_proto(end_unix),
+            )
+            response = insight_stub.ListingStats(req, timeout=INSIGHT_SVC_TIMEOUT)
+        except Exception as e:
+            if retry_connection(e):
+                iteration += 1
+                continue
+            else:
+                logger.exception(e)
+                raise
+        else:
+            break
+    return response
+ 
+def retry_connection(e):
+    is_grpc_error = isinstance(e, grpc.RpcError)
+    if is_grpc_error:
+        if e.code() == grpc.StatusCode.UNAVAILABLE:
+            media_grpc_connect()
+            return True
+        elif e.code() == grpc.StatusCode.DEADLINE_EXCEEDED:
+            return True
+        elif e.code() == grpc.StatusCode.INTERNAL:
+            if "Received RST_STREAM with error code" in str(e.details()):
+                # HTTP/2 error code mapping
+                # https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md#http2-transport-mapping
+                # Envoy open issue on python service
+                # https://github.com/envoyproxy/envoy/issues/3724
+                media_grpc_connect()
+                return True
+ 
+    return False
+	
+=============================================================================================================================================
+syntax = "proto3";
+package proto;
+package media_proto;
+ 
+import "media/common.proto"; # under which common file is there
+
+ 
+ 
+// we import .proto file when our file is dependent on other proto file
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/duration.proto";
+ 
+google.protobuf.Timestamp created_at = 7;
+google.protobuf.StringValue after = 5;
+google.protobuf.Int64Value limit = 6;
+google.protobuf.Int32Value questionnaire_version = 4;
+google.protobuf.DoubleValue price = 4;
+google.protobuf.BoolValue is_escalated = 5;
+google.protobuf.FloatValue feedback_score = 21;
+google.protobuf.UInt64Value offset = 9;
+google.protobuf.Struct attributes = 6;
+google.protobuf.Duration duration = 1;
+ 
+repeated google.protobuf.Int32Value exclude = 2;
+map<string, google.protobuf.Int64Value> thresholds = 2;
+google.protobuf.Struct fieldset_data = 1 [json_name="fieldset_data"];
+ 
+option swift_prefix = "InventorySvc";
+ 
+oneof options
+int64
+bool
+string
+bytes
+double
+ 
+ 
+service MediaService {
+    // comment
+                /* multiline comment */
+    rpc StoreAndTransformImage (StoreAndTransformImageRequest) returns (StoreAndTransformImageResponse) {
+    }
+    rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse) {
+    }
+}
+message HealthCheckRequest {
+}
+message HealthCheckResponse {
+    string msg = 1;
+}
+ 
+message StoreAndTransformImageRequest {
+    string entity_name = 1;
+    string entity_id = 2;
+    string path = 3;
+    bool original_as_fallback = 4;
+    repeated TransformOperation transform_operations = 14;
+    bytes data = 15;
+}
+ 
+message TransformOperation {
+    string operation_id = 1;
+    repeated Transformation transformation_chain = 2;
+    OperationMode mode = 3;
+}
+enum OperationMode {
+    ASYNC = 0;
+    SYNC_ASYNC = 1;
+    SYNC_IGNORE = 2;
+}
+ 
+message Transformation {
+    oneof options {
+        InterlaceOptions interlace = 1;
+        ResizeOptions resize = 2;
+    }
+}
+message InterlaceOptions {
+    bool interlace = 1;
+}
+ 
+message ResizeOptions {
+ 
+    message PercentageOptions {
+        double percentage = 1;
+    }
+    message FixedOptions {
+        int64 max_width = 1;
+        int64 max_height = 2;
+    }
+    message AreaOptions {
+        int64 width = 1;
+        int64 height = 2;
+    }
+ 
+    oneof resizing_mode {
+        PercentageOptions percentage_resize_options = 1;
+        FixedOptions fixed_resize_options = 2;
+        AreaOptions max_area_resize_options = 3;
+        AreaOptions min_area_resize_options = 4;
+    }
+}
+ 
+message StoreAndTransformImageResponse {
+    string entity_name = 1;
+    string entity_id = 2;
+    string path = 3;
+    repeated ImageTransformedEvent image_transformed_events = 4;
+    repeated TransformOperation async_transform_operations = 5;
+    bool original_stored = 6;
+}
+message ImageTransformedEvent {
+    string entity_name = 2;
+    string entity_id = 3;
+    string operation_id = 4;
+    string source_path = 6;
+    string transformed_path = 7;
+    InterlaceInfo interlace_info = 8;
+}
+message InterlaceInfo {
+    repeated InterlaceScanRange ranges = 1;
+}
+message InterlaceScanRange {
+    int64 start = 1;
+    int64 end = 2;
+}
+ 
+ 
+ 
+transform_operations = mediasvc_transformation(content.field)
+req = media_pb2.StoreAndTransformImageRequest(
+                entity_name='listings_photo',
+                entity_id='abcd-efgh-dksk-7jf9',
+                path='/media/photos/abcd.jpg',
+                transform_operations=transform_operations,
+                original_as_fallback=false,
+                data=content.read(), # some byte data
+)
+resp = grpc_stub.StoreAndTransformImage(req, timeout=self.timeout)
+ 
+def mediasvc_transformation(self, field):
+                if field.attname == 'image':
+                                return [
+                                                media_pb2.TransformOperation(
+                                                                operation_id='progressive',
+                                                                transformation_chain=[
+                                                                                media_pb2.Transformation(
+                                                                                                interlace=media_pb2.InterlaceOptions(
+                                                                                                                interlace=True,
+                                                                                                ),
+                                                                                ),
+                                                                ],
+                                                )
+                                ]
+                elif field.attname == 'thumbnail':
+                                return [
+                                                media_pb2.TransformOperation(
+                                                                operation_id='thumbnail',
+                                                                mode=media_pb2.SYNC_ASYNC,
+                                                                transformation_chain=[
+                                                                                media_pb2.Transformation(
+                                                                                                resize=media_pb2.ResizeOptions(
+                                                                                                                # resize to meet min area config
+                                                                                                                min_area_resize_options=media_pb2.ResizeOptions.AreaOptions(
+                                                                                                                                width=320,
+                                                                                                                                height=320,
+                                                                                                                ),
+                                                                                                ),
+                                                                                ),
+                                                                ],
+                                                ),
+                                                media_pb2.TransformOperation(
+                                                                operation_id='progressive_thumbnail',
+                                                                mode=media_pb2.SYNC_ASYNC,
+                                                                transformation_chain=[
+                                                                                media_pb2.Transformation(
+                                                                                                resize=media_pb2.ResizeOptions(
+                                                                                                                # resize to meet min area config
+                                                                                                                min_area_resize_options=media_pb2.ResizeOptions.AreaOptions(
+                                                                                                                                width=320,
+                                                                                                                                height=320,
+                                                                                                                ),
+                                                                                                ),
+                                                                                ),
+                                                                                media_pb2.Transformation(
+                                                                                                interlace=media_pb2.InterlaceOptions(
+                                                                                                                interlace=True,
+                                                                                                ),
+                                                                                ),
+                                                                ],
+                                                )
+                                ]
+                else:
+                                return []
+ 
+ 
+def try_reconnect_grpc_by_exception(self, e):
+                is_grpc_error = isinstance(e, grpc.RpcError)
+                if is_grpc_error:
+                                if e.code() == grpc.StatusCode.UNAVAILABLE:
+                                                self.init_grpc_connection()
+                                                return True
+                                elif e.code() == grpc.StatusCode.DEADLINE_EXCEEDED:
+                                                return True
+                                elif e.code() == grpc.StatusCode.INTERNAL:
+                                                if "Received RST_STREAM with error code" in str(e.details()):
+                                                                # HTTP/2 error code mapping
+                                                                # https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md#http2-transport-mapping
+                                                                # Envoy open issue on python service
+                                                                # https://github.com/envoyproxy/envoy/issues/3724
+                                                                self.init_grpc_connection()
+                                                                return True
+                                                if "GOAWAY received" in str(e.details()):
+                                                                # a past issue about this: https://github.com/grpc/grpc/issues/14088
+                                                                # even it should be fixed in 1.10, but somehow we're still getting it
+                                                                # for safe, still do some reconnection for it here
+                                                                self.init_grpc_connection()
+                                                                return True
+                return False
+ 
+def init_grpc_connection(self):
+                self.grpc_channel = grpc.insecure_channel(MEDIA_SVC_HOSTPORT, options=[
+                                ('grpc.min_reconnect_backoff_ms', 100),
+                                ('grpc.max_reconnect_backoff_ms', MEDIA_SVC_TIMEOUT),
+                ])
+                self.grpc_stub = media_pb2_grpc.MediaServiceStub(self.grpc_channel)
+ 
+while attempt <= max_retries:
+                attempt += 1
+                try:
+                                resp = self.grpc_stub.StoreAndTransformImage(
+                                                req, timeout=MEDIA_SVC_TIMEOUT
+                                )
+                except Exception as e:
+                                if self.try_reconnect_grpc_by_exception(e):
+                                                continue
+                                else:
+                                                logger.exception(e)
+                                                return []
+                else:
+                                break
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+timestamp=timestamp_pb2.Timestamp(seconds=seconds, nanos=nanos)
+ 
+#verified
+import datetime
+from google.protobuf.timestamp_pb2 import Timestamp
+ 
+def get_pb_ts(dt):
+    t = Timestamp()
+    t.FromDatetime(dt)
+    return t
+               
+dt = datetime.datetime.now() #datetime.datetime(2019, 7, 3, 19, 2, 56, 819757)
+dt = get_pb_ts(dt)
+seconds: 1562180576
+nanos: 819757000
+ 
+#verified
+from google.protobuf.timestamp_pb2 import Timestamp
+from datetime import datetime
+from django.utils.timezone import utc
+formatted_dt='2019-06-25T23:20:50Z'
+t = datetime.strptime(formatted_dt.split('+')[0], '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=utc)
+formatted_dt="2021-09-22T19:42:31+07:00"
+t = datetime.strptime(formatted_dt.split('+')[0], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=utc)
+timestamp = Timestamp(seconds=int(time.mktime(t.timetuple())))
+timestamp
+ 
+ 
+def unix_to_proto(unix):
+    fraction, whole = math.modf(unix)
+    return Timestamp(seconds=int(whole), nanos=int(round(fraction * 1e9)))
+ 
+from google.protobuf.wrappers_pb2 import UInt64Value
+from google.protobuf.wrappers_pb2 import StringValue
+ 
+ 
+Dictionary or json to struct
+https://developers.google.com/protocol-buffers/docs/reference/python/
+from google.protobuf.json_format import MessageToJson
+  # Create a proto object and serialize it to a json format string.
+  message = my_proto_pb2.MyMessage(foo='bar')
+  json_string = json_format.MessageToJson(message)
+ 
+  # Parse a json format string to proto object.
+  message = json_format.Parse(json_string, my_proto_pb2.MyMessage())
+ 
+  
+from google.protobuf.struct_pb2 import Struct
+s = Struct()
+s.update({"key": "value"})
+will return an object with representation
+ 
+fields {
+  key: "key"
+  value {
+    string_value: "value"
+  }
+}
+ 
+============================================================================================================================================
