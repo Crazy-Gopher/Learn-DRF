@@ -104,7 +104,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',# postgresql_psycopg2
         'NAME': config.get('database', 'name'),
         'USER': config.get('database', 'username'),
-        #'PASSWORD': config.get('database', 'password'),
+        'PASSWORD': config.get('database', 'password'),
         'HOST': config.get('database', 'host'),
         'PORT': config.get('database', 'port'),
     }
