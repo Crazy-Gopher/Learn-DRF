@@ -24,9 +24,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('polls/', include('polls.urls'), name='polls'),
     path('generate/', views.GenerateRandomUserView.as_view(), name='generate'),
-    path('', views.UsersListView.as_view(), name='users_list'),
+    path('user/', views.UsersListView.as_view(), name='users_list'),
     path('feedback/', FeedbackView.as_view(), name="feedback"),
     path('image/', include('imageupload.urls')),
+    path('', include('snippets.urls')),
 ]
 
 from django.conf import settings 
