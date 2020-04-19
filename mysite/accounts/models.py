@@ -1,8 +1,11 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.cache import cache
+from .serializers import UserSerializer
 import re
 import time
+from datetime import datetime
 
 class City(models.Model):
     name = models.CharField(max_length=200)
@@ -10,12 +13,15 @@ class City(models.Model):
 # FileField
 # PointField
 # ManyToManyField
+
+
 def get_filename_profile(instance, filename):
     username_name = instance.user.username
     username_name = re.sub('[@+]', '', username_name)
     time_name = str(time()).split('.')[0]
     ext = filename[filename.rfind('.'):]
-    return 'photos/profiles/' + strftime('%Y/%m/%d/') + username_name + '_' + time_name + ext
+    return 'photos/profiles/' + datetime.now().strftime('%Y/%m/%d/') + username_name + '_' + time_name + ext
+
 
 class Profile(models.Model):
     GENDER_CHOICES = (
@@ -68,10 +74,6 @@ class Profile(models.Model):
  
         return super(Profile, self).save(force_insert=force_insert, force_update=force_update, using=using,
              update_fields=update_fields)
-
-
-
-
 
 # @receiver(post_save, sender=City)
 # def clean_cache(sender, instance, created, **kwargs):
