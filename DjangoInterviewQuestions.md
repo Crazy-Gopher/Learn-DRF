@@ -847,3 +847,513 @@ fieldsets = (
         (None, {'fields': ('book','imprint', 'id')}),
         ('Availability', {'fields': ('status', 'due_back','borrower')}),
 		)
+		
+## old question, please verify it once before remove
+Importent Django Topics and Interview Questions: 
+
+Installation and setup:
+1. What is recommended way to install Django?
+Installing using pip is the recommended way to install Django Framework. Below are the steps to install official release of Django with pip
+Install pip.
+Configure virtualenv and virtualenvwrapper
+Once virtual environment is created and activated, enter the command pip install Django to install Django
+
+2. How to install the development version of Django
+Follow the below steps to Install the development version of Django Framework.
+Check out Django’s main development branch
+$ git clone https://github.com/django/django.git
+Make sure that the Python interpreter can load Django’s code. The most convenient way to do this is to use virtualenv, virtualenvwrapper, and pip.
+After setting up and activating the virtualenv, run the following command:
+$ pip install -e django/
+Source:https://docs.djangoproject.com/en/2.0/topics/install/
+
+3. How to check installed version of Django?
+By running below command on Terminal.You can check installed version of Django Framework.
+py -m django --version
+
+4. List server requirement to install Django Framework.
+As Django is Python Framework, in order to install Django Python is required.Django comes with an inbuilt lightweight web server that you can use for the testing purpose.If you are using Django on production Apache with mod_wsgi is required.
+
+
+Basics of Django:
+1. What do you understand by Django?
+Django is a free and open source web application framework, written in Python. Django is named after Django Reinhardt, Jazz guitarist from the 1930s to early 1950s who is one of the best guitarists of all time. Django was mainly developed to handle the intensive design of the newsroom. You can even build high-quality web applications using this. It adheres to the DRY principle and focuses completely on automating as much as possible.
+
+2. Name the features available in Django web framework?
+Features available in Django web framework are:
+Admin Interface (CRUD)
+Templating
+Form handling
+Internationalization
+Session, user management, role-based permissions
+Object-relational mapping (ORM)
+Testing Framework
+Fantastic Documentation
+
+3. Is Django stable or not?
+Of course, Django is stable. Most of the companies are using it.
+
+4. Is Django free?
+Yes, Django is free open source web framework for Python
+
+5. When and who create Django?
+According to https://en.wikipedia.org/wiki/Django_(web_framework), Django was created in the fall of 2003, when the web programmers at the Lawrence Journal-World newspaper, Adrian Holovaty and Simon Willison, began using Python to build applications. It was released publicly under a BSD license in July 2005. The framework was named after guitarist Django Reinhardt.
+
+6. What is the name of the Foundation which manages Django web framework?
+Django web framework is managed and maintained by an independent and non-profit organization named Django Software Foundation (DSF).
+
+7. Is Django a high level or low-level framework?
+Django is a high-level Python’s web framework which was designed for rapid development and clean realistic design.
+
+
+Project creation:
+1. What is the process of creating a project in Django?
+
+
+
+Django Architecture:
+1. Does Django Follow Architectural pattern?
+Yes, Django follows Model-View-Controller (MVC) architectural pattern.
+
+2.Explain the architecture of Django?
+Answer:
+Django architecture consists of:
+Models: It describes your database schema and your data structure
+Views: It controls what a user sees, the view retrieves data from appropriate models and execute any calculation made to the data and pass it to the template
+Templates: It determines how the user sees it. It describes how the data received from the views should be changed or formatted for display on the page
+Controller: It is the heart of the system. It handles request and responses, setting up database connections and loading add-ons and specifies Django framework and URL parsing.
+
+3. What does the Django templates contain?
+A template is a simple text file. It can create any text-based format like XML, CSV, HTML, etc. A template contains variables that get replaced with values when the template is evaluated and tags (%tag%) that control the logic of the template.
+
+4. What is the usage of Django-admin.py and manage.py?
+Django-admin.py: It is a Django’s command line utility for administrative tasks.Manage.py: It is an automatically created file in each Django project. It is a thin wrapper around the Django-admin.py. It has the following usage:
+It puts your project’s package on sys.path.
+It sets the DJANGO_SETTING_MODULE environment variable to points to your project’s setting.py file.
+
+Models.py file: This file defines your data model by extending your single code line into full database tables and add a pre-built administration section to manage content.
+Urls.py file: It uses a habitual expression to confine URL patterns for processing.
+Views.py file: It is the main part of Django. The actual processing happens in view.
+
+
+
+Request and Response:
+1. How a request is processed in Django?
+In Django whenever a request is made by a user, it goes through the following steps:
+
+Django determines the root URLconf module to use. Ordinarily, this is the value of the ROOT_URLCONF setting, but if the incoming HttpRequest object has a urlconf attribute (set by middleware), its value will be used in place of the ROOT_URLCONF setting.
+Django loads that Python module and looks for the variable urlpatterns. This should be a Python list of django.urls.path() and/or django.urls.re_path() instances.
+Django runs through each URL pattern, in order, and stops at the first one that matches the requested URL.
+Once one of the URL patterns matches, Django imports and calls the given view, which is a simple Python function (or a class-based view). The view gets passed the following arguments:
+An instance of HttpRequest.
+If the matched URL pattern returned no named groups, then the matches from the regular expression are provided as positional arguments.
+The keyword arguments are made up of any named parts matched by the path expression, overridden by any arguments specified in the optional kwargs argument to django.urls.path() or django.urls.re_path().
+If no URL pattern matches, or if an exception is raised during any point in this process, Django invokes an appropriate error-handling view.
+
+2. What is a context in Django?
+In Django Context is a dictionary with variable names in the form of key and value like {varible1: 101, varible2: 102},when we pass this context to the template render method, {{ varible1 }} would be replaced with 101 and {{ varible2 }} with 102 in your template.
+
+
+
+Views:
+1 Give an example how you can write a VIEW in Django?
+Views are Django functions that take a request and return a response.  To write a view in Django we take a simple example of “Guru99_home” which uses the template Guru99_home.html and uses the date-time module to tell us what the time is whenever the page is refreshed.  The file we required to edit is called view.py, and it will be inside mysite/myapp/
+Copy the below code into it and save the file
+from datatime import datetime
+from django.shortcuts import render
+def home (request):
+	return render(request, ‘Guru99_home.html’, {‘right_now’: datetime.utcnow()})
+Once you have determined the VIEW, you can uncomment this line in urls.py
+# url ( r ‘^$’ , ‘mysite.myapp.views.home’ , name ‘Guru99’),
+The last step will reload your web app so that the changes are noticed by the web server.
+
+
+
+Models and Migrations:
+1. How to Configure Database in Django or Explain how you can set up the Database in Django?
+You can use the command edit mysite/setting.py , it is a normal python module with module level representing Django settings.
+Django uses SQLite by default; it is easy for Django users as such it won’t require any other type of installation. In the case your database choice is different that you have to the following keys in the DATABASE ‘default’ item to match your database connection settings
+Engines: you can change database by using ‘django.db.backends.sqlite3’ , ‘django.db.backeneds.mysql’, ‘django.db.backends.postgresql_psycopg2’, ‘django.db.backends.oracle’ and so on
+Name: The name of your database. In the case if you are using SQLite as your database, in that case database will be a file on your computer, Name should be a full absolute path, including file name of that file.
+If you are not choosing SQLite as your database then setting like Password, Host, User, etc. must be added.
+
+
+2. What does Of Django Field Class types do?
+Following points are specified by the Django Field Class type: –
+
+It specifies the database column type.
+It also specifies the default HTML widget which is availed while we render the form field.
+The requirements of the minimal validation which is used in Django admin is also specified by the field class.
+
+3 Explain the migration in Django and how you can do in SQL?
+Migration in Django is to make changes to your models like deleting a model, adding a field, etc. into your database schema.  There are several commands you use to interact with migrations.
+Migrate
+Makemigrations
+Sqlmigrate
+To do the migration in SQL, you have to print the SQL statement for resetting sequences for a given app name.
+
+django-admin.py sqlsequencreset
+
+Use this command to generate SQL that will fix cases where a sequence is out sync with its automatically incremented field data.
+
+4. Where are Django migrations stored?
+You can think Django Migrations as version control system for your database/Model. It keeps track of changes done in your application Models/Table like adding a field, deleting a model, etc. Migrations in Django are stored as an on-disk format, referred to here as “migration files”. These files are actually just normal Python files with an agreed-upon object layout, written in a declarative style. A basic migration file looks like this:
+
+from django.db import migrations, models
+
+class Migration(migrations.Migration):
+
+    dependencies = [('migrations', '0001_initial')]
+
+    operations = [
+        migrations.DeleteModel('Tribble'),
+        migrations.AddField('Author', 'rating', models.IntegerField(default=0)),
+    ]
+	
+Further Reading https://docs.djangoproject.com/en/2.0/topics/migrations/
+
+5. List out the inheritance styles in Django?
+In Django, there is three possible inheritance styles
+Abstract base classes: This style is used when you only wants parent’s class to hold information that you don’t want to type out for each child model
+Multi-table Inheritance: This style is used If you are sub-classing an existing model and need each model to have its own database table
+Proxy models: You can use this model, If you only want to modify the Python level behavior of the model, without changing the model’s fields
+
+6. List the database backends supported by Django Framework?
+Django officially supports four database backends, they are
+PostgreSQL
+MySQL
+SQLite
+Oracle
+In addition to these, you can also use following 3rd parties
+SAP SQL Anywhere
+IBM DB2
+Microsoft SQL Server
+Firebird
+ODBC
+
+1. What is the difference between get() and filter() methods of a django queryset object?
+get() will fetch a single object whereas a filter() query will return multiple objects from the database using the lookup parameters. get() raises exceptions when the number of objects found is not equal to 1.
+
+2. What is meant by lazy evaluation of a queryset?
+Django querysets doesn’t get evaluated straight off. Querysets will only be evaluated when they are actually needed, which means even if we add filter after filter to a queryset, it still wont run the actual query on the database. This behaviour optimizes the usage of the database to a great deal.
+
+
+Middlewares:
+What is the use of middlewares in django? How to write a custom middleware?
+Middlewares are used to hook certain actions in the request response cycle. Middlewares can be used to perform operations on the request object before the view is executed or after the response object is created or just before the view is executed. Middlewares are executed in the order they are written in the settings file for django.
+
+1. Writing a custom middleware
+https://simpleisbetterthancomplex.com/tutorial/2016/07/18/how-to-create-a-custom-django-middleware.html
+a Middleware is a regular Python class that hooks into Django’s request/response life cycle. Those classes holds pieces of code that are processed upon every request/response your Django application handles.
+
+The Middleware classes doesn’t have to subclass anything and it can live anywhere in your Python path. The only thing Django cares about is the path you register in the project settings MIDDLEWARE_CLASSES.
+Your Middleware class should define at least one of the following methods:
+Called during request:
+process_request(request)
+process_view(request, view_func, view_args, view_kwargs)
+Called during response:
+process_exception(request, exception) (only if the view raised an exception)
+process_template_response(request, response) (only for template responses)
+process_response(request, response)
+
+from datetime import datetime
+class BenchmarkMiddleware(object):
+    def process_request(self, request):
+        request._request_time = datetime.now()
+    def process_template_response(self, request, response):
+        response_time = request._request_time - datetime.now()
+        response.context_data['response_time'] = abs(response_time)
+        return response
+
+2. What is the usage of middlewares in Django?
+Answer:
+Below are the usage of middlewares in Django:
+•Session management
+•Cross-site request forgery protection
+•Use authentication
+•Content Gzipping
+
+3. What is some typical usage of middlewares in Django?
+Middleware is a function that acts on or transforms a request/response before/after it passes through the view layer (e.g. adding the user object to the request)
+Some usage of middlewares in Django is:
+It can be used for Session management,
+User authentication can be done with the help of this.
+It helps in Cross-site request forgery protection
+Content Gzipping, etc.
+
+
+Session:
+1. What is the use of session framework in Django?
+The session framework helps you in storing and retrieving arbitrary data on a per-site visitor basis. The data is stored on the server side and abstracts the receiving and sending of cookies. We can implement sessions through a piece of middleware.
+
+2. How to set/unset session in Django?
+Setting Session in Django
+request.session['key'] = 'value'
+Unset Session in Django
+del request.session['key']
+
+3. How to use file based sessions?
+You have to set the SESSION_ENGINE settings to “django.contrib.sessions.backends.file” to use file-based session.
+
+4. What is the role of Cookie in Django?
+A cookie is a small piece of information which is stored in the client browser. It is used to store user's data in a file permanently (or for the specified time). Cookie has its expiry date and time and removes automatically when gets expire. Django provides built-in methods to set and fetch cookie.
+The set_cookie() method is used to set a cookie and get() method is used to get the cookie.
+The request.COOKIES['key'] array can also be used to get cookie values.
+from django.shortcuts import render  
+from django.http import HttpResponse  
+def setcookie(request):  
+    response = HttpResponse("Cookie Set")  
+    response.set_cookie('java-tutorial', 'javatpoint.com')  
+    return response  
+def getcookie(request):  
+    tutorial  = request.COOKIES['java-tutorial']  
+    return HttpResponse("java tutorials @: "+  tutorial);  
+
+
+Caching:
+1. List some caching strategies that you know in Django!
+Few caching strategies that are available in Django are as follows:
+
+File system caching
+In-memory caching
+Using Memcached
+Database caching
+
+Signals:
+1. What are signals in Django?
+Signal are inbuilt utility in Django. They allow to execute some piece of code based on some action or event is occurred in framework something like a new user register, on delete of a record.
+Below is the list of some inbuilt signal in Django.
+django.db.models.signals.pre_save & django.db.models.signals.post_save
+Sent before or after a model’s save() method is called.
+django.db.models.signals.pre_delete & django.db.models.signals.post_delete
+Sent before or after a model’s delete() method or queryset’s delete() method is called.
+django.db.models.signals.m2m_changed
+Sent when a ManyToManyField on a model is changed.
+django.core.signals.request_started & django.core.signals.request_finished
+Sent when Django starts or finishes an HTTP request.
+Example:
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+@receiver(post_save, sender=User)
+def save_profile(sender, instance, **kwargs):
+    instance.profile.save()
+
+
+2.What are the roles of receiver and sender in signals? or  What are the two important parameters in signals?
+Answer:
+The roles of receiver and sender in signals are:
+Receiver: It specifies the callback function which will be connected to the signal.
+Sender: It specifies a particular sender to receive a signal from.
+
+3. What are django signals? Give an example of post_save and pre_save signals.
+Django signals are used to notify other systems that certain actions have occurred at a point in the system, so that the other systems can act on them. In a simpler way, a sender notifies other receivers that have been registered with the sender that some action has taken place.
+There are a whole bunch of signals that can be setup which django provides. Signals can be pre save/post save signals on models, request started/request finished signals, pre migrate/post migrate signals on migrations among a big list of signals.
+Example of post save/post save signals
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from polls.models import MyModel
+
+@receiver(post_save, sender=MyModel, dispatch_uid="mymodel_post_save")
+def my_model_handler(sender, **kwargs):
+  print('Saved: {}'.format(kwargs['instance'].__dict__))
+
+Custom signals:
+class Author(models.Model):
+    full_name = models.CharField(max_length=100)
+    short_name = models.CharField(max_length=50)
+
+class Book(models.Model):
+    title = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
+    content = model.TextField()
+    status = models.CharField(max_length=10, default=”Drafted”)
+    author_id = model.PositiveIntegerField(null=True)
+In the above two models we are not having an author as foreignKey to Book model, so by default when the Author gets deleted it won’t delete all the Books written by the author. This is the case where signals come to picture, we can achieve this by using pre_delete or post_delete signals.
+
+
+signals.py
+import django.dispatch
+#user_signup_success
+user_email_changed = django.dispatch.Signal(providing_args=['user',])
+
+#sender
+user_email_changed.send(sender=update_user, user=user)
+
+#receiver
+@receiver(user_email_changed)
+def user_email_changed_verification(user, **kwargs):
+    send_verification_email.delay(
+            user, verification_attempt, reverify=True)
+			
+			
+# In signals.py
+import django.dispatch
+book_publised = django.dispatch.Signal(providing_args=["book", “author”])
+
+# In receivers.py
+from django.dispatch import receiver
+from .signals import *
+
+@receiver(book_publised)
+def send_mail_on_publish(sender, **kwargs):
+    # contains the logic to send the email to author.
+	
+We can dispatch signal anywhere as following.
+book_published.send(sender=Book, book=<Book Instance>, user=<Author Instance>)
+https://micropyramid.com/blog/using-djangos-built-in-signals-and-writing-custom-signals/
+
+
+
+Settings:
+1. How can you set up static files in Django?
+Basically, we require three main things to set up static files in Django:
+1) Set STATIC_ROOT in settings.py
+2) Run manage.py collect static
+3) Set up a Static Files entry on the PythonAnywhere web tab
+
+
+Authentication and authorisation:
+How to implement JWT token:
+https://medium.com/python-pandemonium/json-web-token-based-authentication-in-django-b6dcfa42a332
+
+The default authentication schemes may be set globally, using the DEFAULT_AUTHENTICATION_CLASSES setting. For example.
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
+
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+class ExampleView(APIView):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+    def get(self, request, format=None):
+        content = {
+            'user': unicode(request.user),  # `django.contrib.auth.User` instance.
+            'auth': unicode(request.auth),  # None
+        }
+        return Response(content)
+
+Or, if you're using the @api_view decorator with function based views.
+@api_view(['GET'])
+@authentication_classes((SessionAuthentication, BasicAuthentication))
+@permission_classes((IsAuthenticated,))
+def example_view(request, format=None):
+    content = {
+        'user': unicode(request.user),  # `django.contrib.auth.User` instance.
+        'auth': unicode(request.auth),  # None
+    }
+    return Response(content)
+    
+1. Custom authentication:
+To implement a custom authentication scheme, subclass BaseAuthentication and override the .authenticate(self, request) method. The method should return a two-tuple of (user, auth) if authentication succeeds, or None otherwise.
+In some circumstances instead of returning None, you may want to raise an AuthenticationFailed exception from the .authenticate() method.
+from django.contrib.auth.models import User
+from rest_framework import authentication
+from rest_framework import exceptions
+
+class ExampleAuthentication(authentication.BaseAuthentication):
+    def authenticate(self, request):
+        username = request.META.get('X_USERNAME')
+        if not username:
+            return None
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise exceptions.AuthenticationFailed('No such user')
+
+        return (user, None)
+
+2. Custom Permissions:
+create permissions.py file inside your app
+To implement a custom permission, override BasePermission and implement either, or both, of the following methods:
+.has_permission(self, request, view)
+.has_object_permission(self, request, view, obj)
+
+class IsInternal(permissions.BasePermission):
+    def has_permission(self, request, view):
+        api_key = None
+        if not request.user.is_authenticated():
+            api_key = request.META.get(
+                'HTTP_AUTHORIZATION', None
+            )
+        if not api_key:
+            if request.method == 'GET':
+                api_key = request.GET.get('api_key', None)
+            else:
+                api_key = request.DATA.get('api_key', None)
+        return api_key == INTERNAL_API_KEY
+
+
+Custom features:
+1. How to create an Constant in Django.
+To create a constant in Django. Open your settings.py file and add a variable like MY_CONST = “MY_VALUE”.
+To use this constant in your views simply import setting like “Import settings in views.py” and use it as
+settings.MY_CONST
+
+2. How to get current page URI in Django template.
+You can use {{ request.path }} and {{ request.get_full_path }} to get current page URI in Django template
+
+3. When QuerySets are evaluated in Django?
+In Django, a QuerySet can be evaluated in Iteration, Slicing, Pickling/Caching, repr(),len(), list() and bool().
+
+4. Mention what command line can be used to load data into Django?
+To load data into Django you have to use the command line Django-admin.py loaddata. The command line will searches the data and loads the contents of the named fixtures into the database.
+
+5. Explain what does django-admin.py makemessages command is used for?
+This command line executes over the entire source tree of the current directory and abstracts all the strings marked for translation.  It makes a message file in the locale directory.
+
+6. How can you fetch data from different databases inside the same view?
+While using a django queryset, the using(alias) function can be use to specify the database to fetch the query from. `alias` here refers to the db alias that is setup in the settings.DATABASES dictionary.
+
+7. What is model manager? Give an example.
+
+A Manager is an interface which provides database query operations to django models. A manager can be used to change the way a queryset behaves by adding custom operations on the queries.
+
+from django.db import models
+class User(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+
+    def __str__(self):
+        return self.name
+
+1. What is ORM? How it’s Important?
+2. How to write custom middleware in Django? give one sample( you can use IP filtering for the example)
+3. What is Decorator? How to write custom decorator in Django ? Give one sample
+4. What is the Usage of ALLOWED_HOST in Django project settings?
+5. What is Queryset? what is the instance? (all, filter and get)?
+6. Do you know about model Manager in Django? Can we write custom manager? How and why?
+7. What is __init__ method do in models?
+8. What is the difference between Function based and Class-based views?
+9. What is serialization?
+10. What’s the difference between select_related and prefetch_related in Django ORM?
+11. What all basic request methods? Difference between POST & PUT
+12. Difference between Django’s annotate and aggregate methods?
+13. What is CSRF? How it’s preventing in Django?
+
+
+14. How to override existing model class methods?
+There’s another set of model methods that encapsulate a bunch of database behavior that you’ll want to customize. In particular you’ll often want to change the way save() and delete() work.
+You’re free to override these methods (and any other model method) to alter behavior.
+A classic use-case for overriding the built-in methods is if you want something to happen whenever you save an object. For example (see save() for documentation of the parameters it accepts):
+from django.db import models
+
+class Blog(models.Model):
+    name = models.CharField(max_length=100)
+    tagline = models.TextField()
+
+    def save(self, *args, **kwargs):
+        do_something()
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+        do_something_else()
+	
+Overridden model methods are not called on bulk operations
+Note that the delete() method for an object is not necessarily called when deleting objects in bulk using a QuerySet or as a result of a cascading delete(Model.delete() isn’t called on related models, but the pre_delete and post_delete signals are sent for all deleted objects.). To ensure customized delete logic gets executed, you can use pre_delete and/or post_delete signals.
+Unfortunately, there isn’t a workaround when creating or updating objects in bulk, since none of save(), pre_save, and post_save are called.
