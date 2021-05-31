@@ -3,6 +3,7 @@ A Middleware is a regular Python class that hooks into Django’s request/respon
 
 The Middleware classes doesn’t have to subclass anything and it can live anywhere in your Python path. The only thing Django cares about is the path you register in the project settings MIDDLEWARE_CLASSES.
 
+Each middleware component is responsible for doing some specific function. For example, Django includes a middleware component, AuthenticationMiddleware, that associates users with requests using sessions.
 
 Called during request:
                 process_request(request)
@@ -38,6 +39,59 @@ At this point, Django will do all the work on your view function. After the work
 During the response cycle, the Middleware classes are executed bottom-up, meaning it will first execute XFrameOptionsMiddleware, then MessageMiddleware all the way until SecurityMiddleware. For each of the Middlewares it will execute the process_exception(), process_template_response() and process_response() methods.
 
 Finally Django will deliver the response for the client. It is important to note that process_exception() is only executed if a exception occurs inside the view function and process_template_response() is only executed if there is a template in the response.
+
+
+## New way of writing middleware:
+1. A middleware can be written as a function that looks like this:
+
+def simple_middleware(get_response):
+    # One-time configuration and initialization.
+
+    def middleware(request):
+        # Code to be executed for each request before
+        # the view (and later middleware) are called.
+
+        response = get_response(request)
+
+        # Code to be executed for each request/response after
+        # the view is called.
+
+        return response
+
+    return middleware
+	
+
+2. Or it can be written as a class whose instances are callable, like this:
+
+class SimpleMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+        # One-time configuration and initialization.
+
+    def __call__(self, request):
+        # Code to be executed for each request before
+        # the view (and later middleware) are called.
+
+        response = self.get_response(request)
+
+        # Code to be executed for each request/response after
+        # the view is called.
+
+        return response
+
+Note: The get_response callable provided by Django might be the actual view (if this is the last listed middleware) or it might be the next middleware in the chain. The current middleware doesn’t need to know or care what exactly it is, just that it represents whatever comes next.
+
+
+
+
+
+
+
+
+
+
+
+
 
 wherever/you/want/to/put/Middleware.py
 import requests
@@ -172,174 +226,3 @@ Use-cases:
 1. We can create a middleware to log the time for processing a request(set time in process request and then check in process response)
 Monitoring request latency
 2. We can send a jwt refresh token to each request using middleware process response
-
-
-
-
-
-Authentication:
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ),
-    'DEFAULT_PARSER_CLASSES': (
-        'rest_framework.parsers.MultiPartParser',
-        'rest_framework.parsers.FormParser',
-    ),
-                'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
-}
-
-
-
-
-
-
-
-
-request.META.get('HTTP_AUTHORIZATION', None)
-
-decoded_data = jwt.decode(cur_token, TestJWTAuthentication.JWT_SECRET, verify=False)
-decoded_data = jwt.decode(key, TestJWTAuthentication.JWT_SECRET, algorithms=[jwt_algorithm])
-token = jwt.encode(
-                {
-                                "user": user.username,
-                                "id": str(user.id),
-                                "iss": client,
-                                "issued_at": issued_at,
-                                "secret": str(random.randrange(2000, 9999, 4))
-                },
-                TestJWTAuthentication.JWT_SECRET,
-                algorithm=jwt_algorithm
-)
-
-
-get_token
-legacy_generate_token_django
-get_algo
-block_jwt_token (we need to add any sql or sql database to store blocked token)
-get_token_issuer
-is_eligible_for_refresh
-refresh_token
-change_password
-authenticate
-authenticate_credentials
-authenticate_header
-
-import hashlib
-token = str(hashlib.sha256(combo).hexdigest())
-
-CustomJWTAuthentication
-CustomTokenAuthentication
-CustomWebTokenAuthentication
-rest_framework.authentication.TokenAuthentication
-rest_framework.authentication.SessionAuthentication
-
-
-TokenAuthentication
-authenticate_header
-authenticate_credentials
-authenticate
-return (token.user, key)
-
-
-
-Permissions(Authorisaion):
-
-Before running the main body of the view each permission in the list is checked. If any permission check fails an exceptions.PermissionDenied or exceptions.NotAuthenticated exception will be raised, and the main body of the view will not run.
-When the permissions checks fail either a "403 Forbidden" or a "401 Unauthorized" response will be returned,
-IsAuthenticated
-AllowAny
-IsAdminUser
-IsAuthenticatedOrReadOnly
-
-
-If not specified, this setting defaults to allowing unrestricted access:
-
-'DEFAULT_PERMISSION_CLASSES': [
-   'rest_framework.permissions.AllowAny',
-]
-
-Note: when you set new permission classes through class attribute or decorators you're telling the view to ignore the default list set over the settings.py file.
-
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def example_view(request, format=None):
-    content = {
-        'status': 'request was permitted'
-    }
-    return Response(content)
-
-
-
-class ExampleView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, format=None):
-        content = {
-            'status': 'request was permitted'
-        }
-        return Response(content)
-
-
-Provided they inherit from rest_framework.permissions.BasePermission, permissions can be composed using standard Python bitwise operators. For example, IsAuthenticatedOrReadOnly could be written:
-
-from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_METHODS
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
-class ReadOnly(BasePermission):
-    def has_permission(self, request, view):
-        return request.method in SAFE_METHODS
-
-class ExampleView(APIView):
-    permission_classes = [IsAuthenticated|ReadOnly]
-
-    def get(self, request, format=None):
-        content = {
-            'status': 'request was permitted'
-        }
-        return Response(content)
-
-Note: it supports & (and), | (or) and ~ (not).
-
-
-## Custom permissions
-
-To implement a custom permission, override BasePermission and implement either, or both, of the following methods:
-
-    .has_permission(self, request, view)
-    .has_object_permission(self, request, view, obj)
-
-The methods should return True if the request should be granted access, and False otherwise.
-
-If you need to test if a request is a read operation or a write operation, you should check the request method against the constant SAFE_METHODS, which is a tuple containing 'GET', 'OPTIONS' and 'HEAD'. For example:
-
-if request.method in permissions.SAFE_METHODS:
-    # Check permissions for read-only request
-else:
-    # Check permissions for write request
-
-
-from rest_framework import permissions
-
-class BlacklistPermission(permissions.BasePermission):
-    """
-    Global permission check for blacklisted IPs.
-    """
-
-    def has_permission(self, request, view):
-        ip_addr = request.META['REMOTE_ADDR']
-        blacklisted = Blacklist.objects.filter(ip_addr=ip_addr).exists()
-        return not blacklisted
-*******
