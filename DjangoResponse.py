@@ -18,6 +18,7 @@ redirect(to, *args, permanent=False, **kwargs):
 
 render(request, 'myapp/index.html', {'foo': 'bar',}, content_type='application/xhtml+xml')
 
+reverse
 200 400 401 403 405 500
 
 ## HttpRequest
