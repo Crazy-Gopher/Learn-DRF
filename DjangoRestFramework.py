@@ -1,3 +1,235 @@
+## Parser
+REST framework includes a number of built in Parser classes, that allow you to accept requests with various media types. There is also support for defining your
+own custom parsers, which gives you the flexibility to design the media types that your API accepts.
+
+How the parser is determined
+The set of valid parsers for a view is always defined as a list of classes. When request.data is accessed, REST framework will examine the Content-Type header on 
+the incoming request, and determine which parser to use to parse the request content.
+
+## Renderer
+How the renderer is determined
+The set of valid renderers for a view is always defined as a list of classes. When a view is entered REST framework will perform content negotiation on the incoming request, 
+and determine the most appropriate renderer to satisfy the request.
+The basic process of content negotiation involves examining the request's Accept header, to determine which media types it expects in the response.
+
+Ordering of renderer classes
+It's important when specifying the renderer classes for your API to think about what priority you want to assign to each media type. If a client underspecifies the
+representations it can accept, such as sending an Accept: */* header, or not including an Accept header at all, then REST framework will select the first renderer in the list 
+to use for the response.
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+	'rest_framework_xml.parsers.XMLParser',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+	'rest_framework_xml.renderers.XMLRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
+
+class ExampleView(APIView):
+    """
+    A view that can accept POST requests with JSON content.
+    """
+    parser_classes = [JSONParser]
+    renderer_classes = [JSONRenderer]
+
+    def post(self, request, format=None):
+        return Response({'received data': request.data})
+
+
+@api_view(['POST'])
+@renderer_classes([JSONRenderer])
+@parser_classes([JSONParser])
+def example_view(request, format=None):
+    """
+    A view that can accept POST requests with JSON content.
+    """
+    return Response({'received data': request.data})
+
+
+class ExampleView(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        content = {
+            'user': str(request.user),  # `django.contrib.auth.User` instance.
+            'auth': str(request.auth),  # None
+        }
+        return Response(content)
+
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def example_view(request, format=None):
+    content = {
+        'user': str(request.user),  # `django.contrib.auth.User` instance.
+        'auth': str(request.auth),  # None
+    }
+    return Response(content)
+
+## Authentication:
+Authentication is always run at the very start of the view, before the permission and throttling checks occur, and before any other code is allowed to proceed.
+The request.user property will typically be set to an instance of the contrib.auth package's User class.
+The request.auth property is used for any additional authentication information, for example, it may be used to represent an authentication 
+token that the request was signed with.
+
+## How authentication is determined
+The authentication schemes are always defined as a list of classes. REST framework will attempt to authenticate with each class in the list, and will set request.user and
+request.auth using the return value of the first class that successfully authenticates.
+
+If no class authenticates, request.user will be set to an instance of django.contrib.auth.models.AnonymousUser, and request.auth will be set to None.
+
+## TokenAuthentication
+INSTALLED_APPS = [
+    ...
+    'rest_framework.authtoken'
+]
+manage.py migrate
+
+from rest_framework.authtoken.models import Token
+token = Token.objects.create(user=...)
+print(token.key)
+
+Set header:
+	Authorization: Token <token-key>
+		
+If successfully authenticated, TokenAuthentication provides the following credentials.
+
+request.user will be a Django User instance.
+request.auth will be a rest_framework.authtoken.models.Token instance.
+
+## SessionAuthentication
+This authentication scheme uses Django's default session backend for authentication. Session authentication is appropriate for AJAX clients that are running 
+in the same session context as your website.
+
+
+## Permissions
+How permissions are determined
+Permissions in REST framework are always defined as a list of permission classes.
+
+Before running the main body of the view each permission in the list is checked. If any permission check fails an exceptions.PermissionDenied or exceptions.NotAuthenticated
+exception will be raised, and the main body of the view will not run.
+
+
+## Custom permissions
+To implement a custom permission, override BasePermission and implement either, or both, of the following methods:
+
+.has_permission(self, request, view)
+.has_object_permission(self, request, view, obj)
+The methods should return True if the request should be granted access, and False otherwise.
+
+
+
+## Router
+REST framework adds support for automatic URL routing to Django, and provides you with a simple, quick and consistent way of wiring your view logic to a set of URLs.
+
+
+from rest_framework import routers
+
+router = routers.SimpleRouter()
+router.register(r'users', UserViewSet)
+router.register(r'accounts', AccountViewSet)
+urlpatterns = router.urls
+
+There are two mandatory arguments to the register() method:
+
+prefix - The URL prefix to use for this set of routes.
+viewset - The viewset class.
+
+The example above would generate the following URL patterns:
+URL pattern: ^users/$ Name: 'user-list'
+URL pattern: ^users/{pk}/$ Name: 'user-detail'
+URL pattern: ^accounts/$ Name: 'account-list'
+URL pattern: ^accounts/{pk}/$ Name: 'account-detail'
+
+
+## Simple router: This router includes routes for the standard set of list, create, retrieve, update, partial_update and destroy actions. The viewset can also mark
+additional methods to be routed, using the @action decorator.
+
+# Type 1:
+urlpatterns = [
+    url(r'^forgot-password/$', ForgotPasswordFormView.as_view()),
+]
+
+urlpatterns += router.urls
+
+# Type 2
+Alternatively you can use Django's include function, like so...
+urlpatterns = [
+    url(r'^forgot-password/$', ForgotPasswordFormView.as_view()),
+    url(r'^', include(router.urls)),
+]
+
+
+## Routing for extra actions
+from myapp.permissions import IsAdminOrIsSelf
+from rest_framework.decorators import action
+
+class UserViewSet(ModelViewSet):
+    ...
+    @action(methods=['post'], detail=True, permission_classes=[IsAdminOrIsSelf])
+    def set_password(self, request, pk=None)
+
+The following route would be generated:
+
+URL pattern: ^users/{pk}/set_password/$
+URL name: 'user-set-password'
+	
+	
+## DefaultRouter : This router is similar to SimpleRouter as above, but additionally includes a default API root view, that returns a response containing hyperlinks
+to all the list views
+
+As with SimpleRouter the trailing slashes on the URL routes can be removed by setting the trailing_slash argument to False when instantiating the router.
+
+router = DefaultRouter(trailing_slash=False)
+
+
+
+
+
+
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework import pagination PageNumberPagination
+
+
+allowany
+serilizers
+routers
+
+GenericAPIView
+APIView
+CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
+ViewSets, GenericViewSet
+
+renderer_classesc JSONRenderer
+parser JSONRenderer
+from rest_framework.decorators import action
+
+.test import APITestcase
+
+
+Validation error
+reverse_lazy
+reverse
+200, 201, 400, 401,500 , 502, 302, 404 403, 503, 504
+APIClient
+ApiRequestFactory
+APIException
+permissions
+
+
+
+
 class APIView(View):
     # The following policies may be set at either globally, or per-view.
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
@@ -252,208 +484,4 @@ class ModelViewSet(mixins.CreateModelMixin,
     `partial_update()`, `destroy()` and `list()` actions.
     """
     pass
-
-
-
-## Parser
-REST framework includes a number of built in Parser classes, that allow you to accept requests with various media types. There is also support for defining your
-own custom parsers, which gives you the flexibility to design the media types that your API accepts.
-
-How the parser is determined
-The set of valid parsers for a view is always defined as a list of classes. When request.data is accessed, REST framework will examine the Content-Type header on 
-the incoming request, and determine which parser to use to parse the request content.
-
-## Renderer
-How the renderer is determined
-The set of valid renderers for a view is always defined as a list of classes. When a view is entered REST framework will perform content negotiation on the incoming request, 
-and determine the most appropriate renderer to satisfy the request.
-The basic process of content negotiation involves examining the request's Accept header, to determine which media types it expects in the response.
-
-Ordering of renderer classes
-It's important when specifying the renderer classes for your API to think about what priority you want to assign to each media type. If a client underspecifies the
-representations it can accept, such as sending an Accept: */* header, or not including an Accept header at all, then REST framework will select the first renderer in the list 
-to use for the response.
-
-
-REST_FRAMEWORK = {
-    'DEFAULT_PARSER_CLASSES': [
-        'rest_framework.parsers.JSONParser',
-	'rest_framework_xml.parsers.XMLParser',
-    ],
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-	'rest_framework_xml.renderers.XMLRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ]
-}
-
-class ExampleView(APIView):
-    """
-    A view that can accept POST requests with JSON content.
-    """
-    parser_classes = [JSONParser]
-    renderer_classes = [JSONRenderer]
-
-    def post(self, request, format=None):
-        return Response({'received data': request.data})
-
-
-@api_view(['POST'])
-@renderer_classes([JSONRenderer])
-@parser_classes([JSONParser])
-def example_view(request, format=None):
-    """
-    A view that can accept POST requests with JSON content.
-    """
-    return Response({'received data': request.data})
-
-
-class ExampleView(APIView):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, format=None):
-        content = {
-            'user': str(request.user),  # `django.contrib.auth.User` instance.
-            'auth': str(request.auth),  # None
-        }
-        return Response(content)
-
-@api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated])
-def example_view(request, format=None):
-    content = {
-        'user': str(request.user),  # `django.contrib.auth.User` instance.
-        'auth': str(request.auth),  # None
-    }
-    return Response(content)
-
-## Authentication:
-Authentication is always run at the very start of the view, before the permission and throttling checks occur, and before any other code is allowed to proceed.
-The request.user property will typically be set to an instance of the contrib.auth package's User class.
-The request.auth property is used for any additional authentication information, for example, it may be used to represent an authentication 
-token that the request was signed with.
-
-## How authentication is determined
-The authentication schemes are always defined as a list of classes. REST framework will attempt to authenticate with each class in the list, and will set request.user and
-request.auth using the return value of the first class that successfully authenticates.
-
-If no class authenticates, request.user will be set to an instance of django.contrib.auth.models.AnonymousUser, and request.auth will be set to None.
-
-## TokenAuthentication
-INSTALLED_APPS = [
-    ...
-    'rest_framework.authtoken'
-]
-manage.py migrate
-
-from rest_framework.authtoken.models import Token
-token = Token.objects.create(user=...)
-print(token.key)
-
-Set header:
-	Authorization: Token <token-key>
-		
-If successfully authenticated, TokenAuthentication provides the following credentials.
-
-request.user will be a Django User instance.
-request.auth will be a rest_framework.authtoken.models.Token instance.
-
-## SessionAuthentication
-This authentication scheme uses Django's default session backend for authentication. Session authentication is appropriate for AJAX clients that are running 
-in the same session context as your website.
-
-
-## Permissions
-How permissions are determined
-Permissions in REST framework are always defined as a list of permission classes.
-
-Before running the main body of the view each permission in the list is checked. If any permission check fails an exceptions.PermissionDenied or exceptions.NotAuthenticated
-exception will be raised, and the main body of the view will not run.
-
-
-## Custom permissions
-To implement a custom permission, override BasePermission and implement either, or both, of the following methods:
-
-.has_permission(self, request, view)
-.has_object_permission(self, request, view, obj)
-The methods should return True if the request should be granted access, and False otherwise.
-
-## Router
-REST framework adds support for automatic URL routing to Django, and provides you with a simple, quick and consistent way of wiring your view logic to a set of URLs.
-from rest_framework import routers
-
-router = routers.SimpleRouter()
-router.register(r'users', UserViewSet)
-router.register(r'accounts', AccountViewSet)
-urlpatterns = router.urls
-
-There are two mandatory arguments to the register() method:
-
-prefix - The URL prefix to use for this set of routes.
-viewset - The viewset class.
-
-URL pattern: ^users/$ Name: 'user-list'
-URL pattern: ^users/{pk}/$ Name: 'user-detail'
-URL pattern: ^accounts/$ Name: 'account-list'
-URL pattern: ^accounts/{pk}/$ Name: 'account-detail'
-
-
-router = routers.SimpleRouter()
-router.register(r'users', UserViewSet)
-router.register(r'accounts', AccountViewSet)
-
-urlpatterns = [
-    url(r'^forgot-password/$', ForgotPasswordFormView.as_view()),
-]
-
-urlpatterns += router.urls
-Alternatively you can use Django's include function, like so...
-
-urlpatterns = [
-    url(r'^forgot-password/$', ForgotPasswordFormView.as_view()),
-    url(r'^', include(router.urls)),
-]
-
-
-This router is similar to SimpleRouter as above, but additionally includes a default API root view, that returns a response containing hyperlinks to all the list views. It also generates routes for optional .json style format suffixes.
-
-
-
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework import pagination PageNumberPagination
-
-
-allowany
-serilizers
-routers
-
-GenericAPIView
-APIView
-CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
-ViewSets, GenericViewSet
-
-renderer_classesc JSONRenderer
-parser JSONRenderer
-from rest_framework.decorators import action
-
-.test import APITestcase
-
-
-Validation error
-reverse_lazy
-reverse
-200, 201, 400, 401,500 , 502, 302, 404 403, 503, 504
-APIClient
-ApiRequestFactory
-APIException
-permissions
-
-
 
