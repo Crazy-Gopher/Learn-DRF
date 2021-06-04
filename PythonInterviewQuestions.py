@@ -377,6 +377,8 @@ Q. Can we write the code inside __init__.py file?
 	
 
 Q31. What is __init__.py file and what is the use of it?
+	The __init__.py file makes Python treat directories containing it as modules. Furthermore, this is the first file to be loaded in a module, so you can use it 
+	to execute code that you want to run each time a module is loaded, or specify the submodules to be exported.
 
 
 Q1. What are Python namespaces? Why are they used?
