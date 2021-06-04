@@ -21,7 +21,8 @@
 4. What is the latest and stable version of Django ?
 
 5. List server requirement to install Django Framework.
-	As Django is Python Framework, in order to install Django Python is required.Django comes with an inbuilt lightweight web server that you can use for the testing purpose.If you are using Django on production Apache with mod_wsgi is required.
+	As Django is Python Framework, in order to install Django Python is required.Django comes with an inbuilt lightweight web server that you can use for the testing
+	purpose.If you are using Django on production Apache with mod_wsgi is required.
 
 
 ## Basics of Django:
@@ -73,7 +74,9 @@
 	Yes, Django is free open source web framework for Python
 
 5. When and who create Django?
-	According to https://en.wikipedia.org/wiki/Django_(web_framework), Django was created in the fall of 2003, when the web programmers at the Lawrence Journal-World newspaper, Adrian Holovaty and Simon Willison, began using Python to build applications. It was released publicly under a BSD license in July 2005. The framework was named after guitarist Django Reinhardt.
+	According to https://en.wikipedia.org/wiki/Django_(web_framework), Django was created in the fall of 2003, when the web programmers at the Lawrence Journal-World 
+		newspaper, Adrian Holovaty and Simon Willison, began using Python to build applications. It was released publicly under a BSD license in July 2005. The 
+		framework was named after guitarist Django Reinhardt.
 
 6. What is the name of the Foundation which manages Django web framework?
 	Django web framework is managed and maintained by an independent and non-profit organization named Django Software Foundation (DSF).
@@ -127,7 +130,9 @@ Q3. Explain the django project directory structure?
 4. What is the Controller in the MVC framework of Django?
 
 Q5. What is the usage of Django-admin.py and manage.py?
-	Django-admin.py: It is a Django’s command line utility for administrative tasks.Manage.py: It is an automatically created file in each Django project. It is a thin wrapper around the Django-admin.py. It has the following usage:
+	Django-admin.py: It is a Django’s command line utility for administrative tasks.
+		
+	Manage.py: It is an automatically created file in each Django project. It is a thin wrapper around the Django-admin.py. It has the following usage:
 	It puts your project’s package on sys.path.
 	It sets the DJANGO_SETTING_MODULE environment variable to points to your project’s setting.py file.
 
@@ -136,7 +141,9 @@ Q5. What is the usage of Django-admin.py and manage.py?
 	Views.py file: It is the main part of Django. The actual processing happens in view.
 	
 26. What is the significance of manage.py file in Django?
-	The manage.py file is automatically generated whenever you create a project. This is basically a command-line utility that helps you to interact with your Django project in various ways. It does the same things as django-admin but along with that, it also sets the DJANGO_SETTINGS_MODULE environment variable in order to point to your project’s settings. Usually, it is better to make use of manage.py rather than the django-admin in case you are working on a single project.
+	The manage.py file is automatically generated whenever you create a project. This is basically a command-line utility that helps you to interact with your Django
+	project in various ways. It does the same things as django-admin but along with that, it also sets the DJANGO_SETTINGS_MODULE environment variable in order to point
+	to your project’s settings. Usually, it is better to make use of manage.py rather than the django-admin in case you are working on a single project.
 
 5. What is the difference between a Project and an App?
 	An app is basically a Web Application that is created to do something for example, a database of employee records. A project, on the other hand, is a collection of apps of some particular website. Therefore, a single project can consist of ‘n’ number of apps and a single app can be in multiple projects.
@@ -165,13 +172,16 @@ Q5. What is the usage of Django-admin.py and manage.py?
 ## Request and Response:
 9. How a request is processed in Django?
 	In Django whenever a request is made by a user, it goes through the following steps:
-	Django determines the root URLconf module to use. Ordinarily, this is the value of the ROOT_URLCONF setting, but if the incoming HttpRequest object has a urlconf attribute (set by middleware), its value will be used in place of the ROOT_URLCONF setting.
+	Django determines the root URLconf module to use. Ordinarily, this is the value of the ROOT_URLCONF setting, but if the incoming HttpRequest object has a urlconf 
+	attribute (set by middleware), its value will be used in place of the ROOT_URLCONF setting.
 	Django loads that Python module and looks for the variable urlpatterns. This should be a Python list of django.urls.path() and/or django.urls.re_path() instances.
 	Django runs through each URL pattern, in order, and stops at the first one that matches the requested URL.
-	Once one of the URL patterns matches, Django imports and calls the given view, which is a simple Python function (or a class-based view). The view gets passed the following arguments:
+	Once one of the URL patterns matches, Django imports and calls the given view, which is a simple Python function (or a class-based view). The view gets passed the 
+	following arguments:
 	An instance of HttpRequest.
 	If the matched URL pattern returned no named groups, then the matches from the regular expression are provided as positional arguments.
-	The keyword arguments are made up of any named parts matched by the path expression, overridden by any arguments specified in the optional kwargs argument to django.urls.path() or django.urls.re_path().
+	The keyword arguments are made up of any named parts matched by the path expression, overridden by any arguments specified in the optional kwargs argument 
+	to django.urls.path() or django.urls.re_path().
 	If no URL pattern matches, or if an exception is raised during any point in this process, Django invokes an appropriate error-handling view.
 
 	When the user makes a request of your application, a WSGI handler is instantiated, which:
@@ -185,32 +195,18 @@ Q5. What is the usage of Django-admin.py and manage.py?
 	processes any exception methods
 	loops through each of the response methods, (from the inside out, reverse order from request middlewares)
 	finally builds a return value and calls the callback function to the web server
-
-    Django determines the root URLconf module to use. Ordinarily, this is the value of the ROOT_URLCONF setting, but if the incoming HttpRequest object has a urlconf attribute (set by middleware), its value will be used in place of the ROOT_URLCONF setting.
-    Django loads that Python module and looks for the variable urlpatterns. This should be a Python list of django.urls.path() and/or django.urls.re_path() instances.
-    Django runs through each URL pattern, in order, and stops at the first one that matches the requested URL.
-    Once one of the URL patterns matches, Django imports and calls the given view, which is a simple Python function (or a class-based view). The view gets passed the following arguments:
-        An instance of HttpRequest.
-        If the matched URL pattern returned no named groups, then the matches from the regular expression are provided as positional arguments.
-        The keyword arguments are made up of any named parts matched by the path expression, overridden by any arguments specified in the optional kwargs argument to django.urls.path() or django.urls.re_path().
-        If no URL pattern matches, or if an exception is raised during any point in this process, Django invokes an appropriate error-handling view.
 		
 		
 2. What is a context in Django?
-	In Django Context is a dictionary with variable names in the form of key and value like {varible1: 101, varible2: 102},when we pass this context to the template render method, {{ varible1 }} would be replaced with 101 and {{ varible2 }} with 102 in your template.
+	In Django Context is a dictionary with variable names in the form of key and value like {varible1: 101, varible2: 102},when we pass this context to the template 
+	render method, {{ varible1 }} would be replaced with 101 and {{ varible2 }} with 102 in your template.
 
 3. How to make a variable available to all the templates?
-	You can make use of the RequestContext in case all your templates require the same objects, such as, in the case of menus. This method takes an HttpRequest as its first parameter and it automatically populates the context with a few variables, according to the engine’s
-	context_processors configuration option.
+	You can make use of the RequestContext in case all your templates require the same objects, such as, in the case of menus. This method takes an HttpRequest as its 
+	first parameter and it automatically populates the context with a few variables, according to the engine’s context_processors configuration option.
 
 
 3. What is django.shortcuts.render function?
-	When a view function returns a webpage as HttpResponse instead of a simple string, we use render(). Render function is a shortcut function that lets the developer easily pass the data dictionary with the template. This function then combines the template with a data dictionary via templating engine. Finally, this render() returns as HttpResponse with the rendered text, which is the data returned by models. Thus, Django render() bypasses most of the developer’s work and lets him use different template engines.
-	The basic syntax:
-	render(request, template_name, context=None, content_type=None, status=None, using=None)
-	The request is the parameter that generates the response. The template name is the HTML template used, whereas the context is a dict of the data passed on the page from the python. You can also specify the content type, the status of the data you passed, and the render you are returning.
-
-
 	When a View function returns a webpage as HttpResponse rather than a simple string, we use render().
 	Render function is a shortcut function which lets the developer to easily pass the data dictionary with the template.
 	This function then combines the template with data dictionary via templating engine.
@@ -220,6 +216,7 @@ Q5. What is the usage of Django-admin.py and manage.py?
 	The basic render Syntax:
 
 	render(request, template_name, context=None, content_type=None, status=None, using=None)
+	
 	The request is the parameter which generates the response, the template_name containing the value where the template is stored.
 	The template name and other parameters are for passing the dictionary.
 	If you want more control, you can specify the content type, status of the data you passed and the render you are returning. That is the render().
@@ -228,29 +225,35 @@ Q5. What is the usage of Django-admin.py and manage.py?
 	You can use {{ request.path }} and {{ request.get_full_path }} to get current page URI in Django template.
 
 30. Why is permanent redirection not a good option?
-	Permanent redirection is used only when you don’t want to lead visitors to the old URLs. The response of the permanent redirections is cached by the browser so when you try to redirect to something else it will cause issues. Since this is a browser-side operation if your user wants to move to a new page it will load the same page.
+	Permanent redirection is used only when you don’t want to lead visitors to the old URLs. The response of the permanent redirections is cached by the browser so when 
+	you try to redirect to something else it will cause issues. Since this is a browser-side operation if your user wants to move to a new page it will load the same page.
 
 
 ## Templates
 1. What does the Django templates contain?
-	A template is a simple text file. It can create any text-based format like XML, CSV, HTML, etc. A template contains variables that get replaced with values when the template is evaluated and tags (%tag%) that control the logic of the template.
+	A template is a simple text file. It can create any text-based format like XML, CSV, HTML, etc. A template contains variables that get replaced with values when the
+	template is evaluated and tags (%tag%) that control the logic of the template.
 
 2. How does Django Templating Work?
-10. What is Jinja templating?
+
+3. What is Jinja templating?
 	Jinja Templating is a very popular templating engine for Python, the latest version is Jinja2. 
 
 	Some of its features are:
 
 	Sandbox Execution - This is a sandbox (or a protected) framework for automating the testing process
-	HTML Escaping - It provides automatic HTML Escaping as <, >, & characters have special values in templates and if using a regular text, these symbols can lead to XSS Attacks which Jinja deals with automatically.
+	HTML Escaping - It provides automatic HTML Escaping as <, >, & characters have special values in templates and if using a regular text, these symbols can lead 
+	to XSS Attacks which Jinja deals with automatically.
 	Template Inheritance
 	Generates HTML templates much faster than default engine
 	Easier to debug as compared to the default engine.
 
 4. What are templates in Django or Django template language?
-	Templates are an integral part of the Django MVT architecture. They generally comprise HTML, CSS, and js in which dynamic variables and information are embedded with the help of views. Some constructs are recognized and interpreted by the template engine. The main ones are variables and tags.
+	Templates are an integral part of the Django MVT architecture. They generally comprise HTML, CSS, and js in which dynamic variables and information are embedded 
+	with the help of views. Some constructs are recognized and interpreted by the template engine. The main ones are variables and tags.
 
-	A template is rendered with a context. Rendering just replaces variables with their values, present in the context, and processes tags. Everything else remains as it is.
+	A template is rendered with a context. Rendering just replaces variables with their values, present in the context, and processes tags. Everything else remains as 
+	it is.
 
 	The syntax of the Django template language includes the following four constructs :
 
@@ -288,20 +291,21 @@ Q.15 How does Django Templating Work?
 	Store your static files in a folder called static in your app. For example my_sample/static/my_sample/abcxy.jpg
 
 7. Define static files and explain their uses?
-	Websites generally need to serve additional files such as images. Javascript or CSS. In Django, these files are referred to as “static files”, Apart from that Django provides django.contrib.staticfiles to manage these static files.
+	Websites generally need to serve additional files such as images. Javascript or CSS. In Django, these files are referred to as “static files”, Apart from that Django 
+	provides django.contrib.staticfiles to manage these static files.
 	
 3. What django collectstatic command does?
 4. What is Static_root in Django?
 	STATIC_ROOT is the absolute path to the directory from where Django collectstatic will static files for deployment.
 	STATIC_ROOT example:
 	STATIC_ROOT="/var/www/project_dir/static/"
+	
 5. Where to store static files in django ?
 
 
 ## Forms
 1. What is ModelForm used for?
-	select_related and prefetch_related
-	Django's ORM (as every other) can be both a blessing and a curse. Getting a foreign key property can easily lead you to executing million queries. Using select_related and prefetch_related can come as a saviour so it is important to know how to use them.
+
 2. How to implement Forms validation?
 3. What are different types of form available in django?
 
@@ -340,7 +344,8 @@ Q.25 What are some good practices when writing custom validators? How do we rais
 
 Q.15 What is the use of cached_property() decorator? (https://data-flair.training/blogs/django-interview-questions-and-answers/)
 
-	Ans. The cached_property() decorator is a built-in decorator. This decorator comes under the django.utils.functional module. The decorator’s property is to take the method as an argument. The method’s result is cached by the decorator for that instance.
+	Ans. The cached_property() decorator is a built-in decorator. This decorator comes under the django.utils.functional module. The decorator’s property is to take the 
+	method as an argument. The method’s result is cached by the decorator for that instance.
 	This is useful when a method is computationally expensive. Also, its generated value is valid for a while or for the session.
 	We can use this decorator just before we define the computationally expensive method. That method’s answer is cached for the instance.
 
@@ -349,10 +354,16 @@ Q.15 What is the use of cached_property() decorator? (https://data-flair.trainin
 1. What is Django Admin Interface? Is Django’s Admin Interface customizable? If yes, then How?
 
 35. What are the ways to customize the functionality of the Django admin interface?
-	There are multiple ways to customize the functionality of the Django admin interface. You can piggyback on top of an add/change form that’s automatically generated by Django, you can add JavaScript modules using the js parameter. This parameter is basically a list of URLs that point to the JavaScript modules that are to be included in your project within a <script> tag. You can also write views for the admin if you want.
+	There are multiple ways to customize the functionality of the Django admin interface. You can piggyback on top of an add/change form that’s automatically generated
+	by Django, you can add JavaScript modules using the js parameter. This parameter is basically a list of URLs that point to the JavaScript modules that are to be 
+	included in your project within a <script> tag. You can also write views for the admin if you want.
 
 13. How do we register a model with Django admin?
-	To register a model with Django’s admin interface, we make changes to our apps admin.py file. We have to open the admin.py file in the app folder in which our models are. For example, if we have an app named ‘polls’ and we wish to register a model named ‘Question’, then we need to open ‘polls/admin.py’ and import the Question model and write: admin.site.register(Question). This will register our Question model with the admin site.
+	To register a model with Django’s admin interface, we make changes to our apps admin.py file. We have to open the admin.py file in the app folder in which our
+	models are. For example, if we have an app named ‘polls’ and we wish to register a model named ‘Question’, then we need to open
+	‘polls/admin.py’ and import the Question model and write: 
+		admin.site.register(Question). 
+	This will register our Question model with the admin site.
 
 
 ## Unittesting
@@ -453,7 +464,9 @@ Q.1 What are views in Django ?
 
 5. What is __init__ method do in models?
 6. What’s the difference between select_related and prefetch_related in Django ORM?
-	Though both the functions are used to fetch the related fields on a model but their functioning is bit different from each other. In simple words, select_related uses a foreign key relationship, i.e. using join on the query itself while on the prefetch_related there is a separate lookup and the joining on the python side. Let’s try to illustrate this via an example:
+	Though both the functions are used to fetch the related fields on a model but their functioning is bit different from each other. In simple words, select_related uses
+	a foreign key relationship, i.e. using join on the query itself while on the prefetch_related there is a separate lookup and the joining on the python side. 
+	Let’s try to illustrate this via an example:
 
 	from django.db import models
 	class Country(models.Model):
@@ -479,7 +492,9 @@ Q.1 What are views in Django ?
 	print(queryset.query)
 
 31. Difference between Django OneToOneField and ForeignKey Field?
-	Both of them are of the most common types of fields used in Django. The only difference between these two is that ForeignKey field consists of on_delete option along with a model’s class because it’s used for many-to-one relationships while on the other hand, the OneToOneField, only carries out a one-to-one relationship and requires only the model’s class.
+	Both of them are of the most common types of fields used in Django. The only difference between these two is that ForeignKey field consists of on_delete option 
+	along with a model’s class because it’s used for many-to-one relationships while on the other hand, the OneToOneField, only carries out a one-to-one relationship
+	and requires only the model’s class.
 
 32. How can you combine multiple QuerySets in a View?
 	Initially, Concatenating QuerySets into lists is believed to be the easiest approach. Here’s an example of how to do that:
@@ -490,6 +505,10 @@ Q.1 What are views in Django ?
 8. When QuerySets are evaluated in Django?
 	In Django, a QuerySet can be evaluated in Iteration, Slicing, Pickling/Caching, repr(),len(), list() and bool().
 
+The pickle module is used for implementing binary protocols for serializing and de-serializing a Python object structure.
+Pickling: It is a process where a Python object hierarchy is converted into a byte stream.
+Unpickling: It is the inverse of Pickling process where a byte stream is converted into an object hierarchy.
+	
 9. What is a Model in Django and what is the Model class?
 
 10. How can you fetch data from different databases inside the same view?
@@ -498,13 +517,19 @@ Q.1 What are views in Django ?
 11. How to work with multiple databases in django? like one for saving and one for retrieving
 
 23. When can you use iterators in Django ORM?
-	Iterators in Python are basically containers that consist of a countable number of elements. Any object that is an iterator implements two methods which are, the __init__() and the __next__()  methods. When you are making use of iterators in Django, the best situation to do it is when you have to process results that will require a large amount of memory space. To do this, you can make use of the iterator() method which basically evaluates a QuerySet and returns the corresponding iterator over the results.
+	Iterators in Python are basically containers that consist of a countable number of elements. Any object that is an iterator implements two methods which are, 
+	the __init__() and the __next__()  methods. When you are making use of iterators in Django, the best situation to do it is when you have to process results that 
+	will require a large amount of memory space. To do this, you can make use of the iterator() method which basically evaluates a QuerySet and returns the corresponding
+	iterator over the results.
 
 
 12. How to Configure Database in Django or Explain how you can set up the Database in Django?
 	You can use the command edit mysite/setting.py , it is a normal python module with module level representing Django settings.
-	Django uses SQLite by default; it is easy for Django users as such it won’t require any other type of installation. In the case your database choice is different that you have to the following keys in the DATABASE ‘default’ item to match your database connection settings
-	Engines: you can change database by using ‘django.db.backends.sqlite3’ , ‘django.db.backeneds.mysql’, ‘django.db.backends.postgresql_psycopg2’, ‘django.db.backends.oracle’ and so on
+	Django uses SQLite by default; it is easy for Django users as such it won’t require any other type of installation. In the case your database choice is different
+	that you have to the following keys in the DATABASE ‘default’ item to match your database connection settings
+	
+	Engines: you can change database by using ‘django.db.backends.sqlite3’ , ‘django.db.backeneds.mysql’, ‘django.db.backends.postgresql_psycopg2’,
+		‘django.db.backends.oracle’ and so on
 	Name: The name of your database. In the case if you are using SQLite as your database, in that case database will be a file on your computer, Name should be a full absolute path, including file name of that file.
 	If you are not choosing SQLite as your database then setting like Password, Host, User, etc. must be added.
 
@@ -525,7 +550,9 @@ Q.1 What are views in Django ?
 	Use this command to generate SQL that will fix cases where a sequence is out sync with its automatically incremented field data.
 
 15. Where are Django migrations stored?
-	You can think Django Migrations as version control system for your database/Model. It keeps track of changes done in your application Models/Table like adding a field, deleting a model, etc. Migrations in Django are stored as an on-disk format, referred to here as “migration files”. These files are actually just normal Python files with an agreed-upon object layout, written in a declarative style. A basic migration file looks like this:
+	You can think Django Migrations as version control system for your database/Model. It keeps track of changes done in your application Models/Table like
+	adding a field, deleting a model, etc. Migrations in Django are stored as an on-disk format, referred to here as “migration files”. These files are actually 
+	just normal Python files with an agreed-upon object layout, written in a declarative style. A basic migration file looks like this:
 
 	from django.db import migrations, models
 
@@ -542,9 +569,13 @@ Q.1 What are views in Django ?
 
 16. List out the inheritance styles in Django?
 	In Django, there is three possible inheritance styles
-	Abstract base classes: This style is used when you only wants parent’s class to hold information that you don’t want to type out for each child model
-	Multi-table Inheritance: This style is used If you are sub-classing an existing model and need each model to have its own database table
-	Proxy models: You can use this model, If you only want to modify the Python level behavior of the model, without changing the model’s fields
+	1. Abstract base classes : Abstract base classes are useful when you want to put some common information into a number of other models. You write your base class
+		and put abstract=True in the Meta class. This model will then not be used to create any database table. Instead, when it is used as a base class for other
+		models, its fields will be added to those of the child class.
+	2. Multi-table inheritance: The second type of model inheritance supported by Django is when each model in the hierarchy is a model all by itself. Each model
+		corresponds to its own database table and can be queried and created individually. The inheritance relationship introduces links between the child model 
+		and each of its parents (via an automatically-created OneToOneField). 
+	3. Proxy models: You can use this model, If you only want to modify the Python level behavior of the model, without changing the model’s fields
 
 17. List the database backends supported by Django Framework?
 	Django officially supports four database backends, they are
@@ -560,21 +591,29 @@ Q.1 What are views in Django ?
 	ODBC
 
 18. What is the difference between get() and filter() methods of a django queryset object?
-	get() will fetch a single object whereas a filter() query will return multiple objects from the database using the lookup parameters. get() raises exceptions when the number of objects found is not equal to 1.
+	get() will fetch a single object whereas a filter() query will return multiple objects from the database using the lookup parameters. 
+	get() raises exceptions when the number of objects found is not equal to 1.
 	You can use any query expression with get(), just like with filter() - again, see Field lookups below.
 
-	Note that there is a difference between using get(), and using filter() with a slice of [0]. If there are no results that match the query, get() will raise a DoesNotExist exception. This exception is an attribute of the model class that the query is being performed on - so in the code above, if there is no Entry object with a primary key of 1, Django will raise Entry.DoesNotExist.
+	Note that there is a difference between using get(), and using filter() with a slice of [0]. If there are no results that match the query, get() will raise a
+	DoesNotExist exception. This exception is an attribute of the model class that the query is being performed on - so in the code above, if there is no Entry
+	object with a primary key of 1, Django will raise Entry.DoesNotExist.
 
-	Similarly, Django will complain if more than one item matches the get() query. In this case, it will raise MultipleObjectsReturned, which again is an attribute of the model class itself.
+	Similarly, Django will complain if more than one item matches the get() query. In this case, it will raise MultipleObjectsReturned, which again is an attribute 
+	of the model class itself.
 
 2. What is meant by lazy evaluation of a queryset?
-	Django querysets doesn’t get evaluated straight off. Querysets will only be evaluated when they are actually needed, which means even if we add filter after filter to a queryset, it still wont run the actual query on the database. This behaviour optimizes the usage of the database to a great deal.
+	Django querysets doesn’t get evaluated straight off. Querysets will only be evaluated when they are actually needed,
+	which means even if we add filter after filter to a queryset, it still wont run the actual query on the database. 
+	This behaviour optimizes the usage of the database to a great deal.
 
 
 21. How to override existing model class methods?
-	There’s another set of model methods that encapsulate a bunch of database behavior that you’ll want to customize. In particular you’ll often want to change the way save() and delete() work.
+	There’s another set of model methods that encapsulate a bunch of database behavior that you’ll want to customize. In particular you’ll often want to change the way
+	save() and delete() work.
 	You’re free to override these methods (and any other model method) to alter behavior.
-	A classic use-case for overriding the built-in methods is if you want something to happen whenever you save an object. For example (see save() for documentation of the parameters it accepts):
+	A classic use-case for overriding the built-in methods is if you want something to happen whenever you save an object. 
+	For example (see save() for documentation of the parameters it accepts):
 	from django.db import models
 
 	class Blog(models.Model):
@@ -587,15 +626,18 @@ Q.1 What are views in Django ?
 			do_something_else()
 		
 	Overridden model methods are not called on bulk operations
-	Note that the delete() method for an object is not necessarily called when deleting objects in bulk using a QuerySet or as a result of a cascading delete(Model.delete() isn’t called on related models, but the pre_delete and post_delete signals are sent for all deleted objects.). To ensure customized delete logic gets executed, you can use pre_delete and/or post_delete signals.
+	Note that the delete() method for an object is not necessarily called when deleting objects in bulk using a QuerySet or as a result of a cascading
+	delete(Model.delete() isn’t called on related models, but the pre_delete and post_delete signals are sent for all deleted objects.). To ensure customized delete logic gets executed, you can use pre_delete and/or post_delete signals.
 	Unfortunately, there isn’t a workaround when creating or updating objects in bulk, since none of save(), pre_save, and post_save are called.
 
 22. What is a Meta Class in Django?
-	A Meta class is simply an inner class that provides metadata about the outer class in Django. It defines such things as available permissions, associated database table name, singular and plural versions of the name, etc.
+	A Meta class is simply an inner class that provides metadata about the outer class in Django. It defines such things as available permissions,
+	associated database table name, singular and plural versions of the name, etc.
 	
 23. What is model manager? Can we write custom manager? How and why?
 
-	A Manager is an interface which provides database query operations to django models. A manager can be used to change the way a queryset behaves by adding custom operations on the queries.
+	A Manager is an interface which provides database query operations to django models. A manager can be used to change the way a queryset behaves
+	by adding custom operations on the queries.
 
 	from django.db import models
 	class User(models.Model):
@@ -606,7 +648,8 @@ Q.1 What are views in Django ?
 			return self.name
 
 24. What are models in Django?
-	A model in Django refers to a class that maps to a database table or database collection. Each attribute of the Django model class represents a database field. They are defined in app/models.py
+	A model in Django refers to a class that maps to a database table or database collection. Each attribute of the Django model class represents a database field.
+	They are defined in app/models.py
 
 	Example: 
 
@@ -626,7 +669,8 @@ Q.1 What are views in Django ?
 
 
 37. Explain Q objects in Django ORM?
-	Q objects are used to write complex queries, as in filter() functions just `AND` the conditions while if you want to `OR` the conditions you can use Q objects. Let’s see an example:
+	Q objects are used to write complex queries, as in filter() functions just `AND` the conditions while if you want to `OR` the conditions you can use Q objects.
+	Let’s see an example:
 
 	from django.db import models
 	from django.db.models import Q
@@ -662,16 +706,14 @@ Q.1 What are views in Django ?
 
 ## Signals:
 1. What are signals in Django?
-	Signal are inbuilt utility in Django. They allow to execute some piece of code based on some action or event is occurred in framework something like a new user register, on delete of a record.
+	Signal are inbuilt utility in Django. They allow to execute some piece of code based on some action or event is occurred in framework something like a new user 
+	register, on delete of a record.
 	Below is the list of some inbuilt signal in Django.
-	django.db.models.signals.pre_save & django.db.models.signals.post_save
-	Sent before or after a model’s save() method is called.
-	django.db.models.signals.pre_delete & django.db.models.signals.post_delete
-	Sent before or after a model’s delete() method or queryset’s delete() method is called.
-	django.db.models.signals.m2m_changed
-	Sent when a ManyToManyField on a model is changed.
-	django.core.signals.request_started & django.core.signals.request_finished
-	Sent when Django starts or finishes an HTTP request.
+	django.db.models.signals.pre_save & django.db.models.signals.post_save : Sent before or after a model’s save() method is called.
+	django.db.models.signals.pre_delete & django.db.models.signals.post_delete: Sent before or after a model’s delete() method or queryset’s delete() method is called.
+	django.db.models.signals.m2m_changed : Sent when a ManyToManyField on a model is changed.
+	django.core.signals.request_started & django.core.signals.request_finished :Sent when Django starts or finishes an HTTP request.
+	
 	Example:
 	from django.contrib.auth.models import User
 	from django.db.models.signals import post_save
@@ -682,7 +724,8 @@ Q.1 What are views in Django ?
 
 
 	Whenever there is a modification in a model, we may need to trigger some actions. 
-	Django provides an elegant way to handle these in the form of signals. The signals are the utilities that allow us to associate events with actions. We can implement these by developing a function that will run when a signal calls it.
+	Django provides an elegant way to handle these in the form of signals. The signals are the utilities that allow us to associate events with actions.
+	We can implement these by developing a function that will run when a signal calls it.
 
 	List of built-in signals in the models:
 
@@ -711,7 +754,8 @@ Q.1 What are views in Django ?
 		content = model.TextField()
 		status = models.CharField(max_length=10, default=”Drafted”)
 		author_id = model.PositiveIntegerField(null=True)
-	In the above two models we are not having an author as foreignKey to Book model, so by default when the Author gets deleted it won’t delete all the Books written by the author. This is the case where signals come to picture, we can achieve this by using pre_delete or post_delete signals.
+	In the above two models we are not having an author as foreignKey to Book model, so by default when the Author gets deleted it won’t delete all the Books
+	written by the author. This is the case where signals come to picture, we can achieve this by using pre_delete or post_delete signals.
 
 3. What are django signals? Give an example of post_save and pre_save signals.
 	Django signals are used to notify other systems that certain actions have occurred at a point in the system, so that the other systems can act on them. In a simpler way, a sender notifies other receivers that have been registered with the sender that some action has taken place.
@@ -811,9 +855,11 @@ Q.1 What are views in Django ?
 
 ## Session:
 1. What is the use of session framework in Django?
-	The session framework helps you in storing and retrieving arbitrary data on a per-site visitor basis. The data is stored on the server side and abstracts the receiving and sending of cookies. We can implement sessions through a piece of middleware.
+	The session framework helps you in storing and retrieving arbitrary data on a per-site visitor basis. The data is stored on the server side and abstracts the 
+	receiving and sending of cookies. We can implement sessions through a piece of middleware.
 
-	Django provides session that lets you store and retrive data on a per-site-visitor basis. Django abstract the process of sending and receiving the cookies, by placing a session id cookies on client side and storring all related that on the server side. So data itself is not stored client side. This is nice from a security perspective.
+	Django provides session that lets you store and retrive data on a per-site-visitor basis. Django abstract the process of sending and receiving the cookies,
+	by placing a session id cookies on client side and storring all related that on the server side. So data itself is not stored client side. This is nice from a security perspective.
 	
 	Using the session framework, you can easily store and retrieve arbitrary data based on the pre-site-visitors. It stores data on the server-side and takes care of the process of sending and receiving cookies. These cookies just consist of a session ID, not the actual data itself unless you explicitly use a cookie-based backend.
 	
@@ -843,7 +889,8 @@ Q.1 What are views in Django ?
 
 ## Authentication and authorisation:
 16. Explain user authentication in Django?
-	Django comes with a built-in user authentication system, which handles objects like users, groups, user-permissions, and few cookie-based user sessions. Django User authentication not only authenticates the user but also authorizes him.
+	Django comes with a built-in user authentication system, which handles objects like users, groups, user-permissions, and few cookie-based user sessions. 
+	Django User authentication not only authenticates the user but also authorizes him.
 
 	The system consists and operates on these objects:
 
@@ -967,7 +1014,8 @@ Q.1 What are views in Django ?
 3. What are the different types of Django Exception Classes?
 
 Q46. What do you mean by the csrf_token?
-	The csrf_token is used for protection against Cross-Site Request Forgeries. This kind of attack takes place when a malicious website consists of a link, some JavaScript or a form whose aim is to perform some action on your website by using the login credentials of a genuine user.
+	The csrf_token is used for protection against Cross-Site Request Forgeries. This kind of attack takes place when a malicious website consists of a link
+	, some JavaScript or a form whose aim is to perform some action on your website by using the login credentials of a genuine user.
 
 
 ## Custom features:
