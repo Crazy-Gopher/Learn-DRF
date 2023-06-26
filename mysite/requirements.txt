@@ -7,7 +7,7 @@ chardet==3.0.4
 defusedxml==0.6.0
 Django==2.2.3
 django-grpc==0.1.8
-djangorestframework==3.10.1
+djangorestframework==3.11.2
 djangorestframework-xml==1.4.0
 elasticsearch==7.0.2
 entrypoints==0.3
