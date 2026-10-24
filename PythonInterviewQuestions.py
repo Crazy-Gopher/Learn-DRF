@@ -1,5 +1,6 @@
 https://www.interviewbit.com/python-interview-questions/
 
+
 Q.1 What is the difference between python 2 and 3? MRO, Exception handling, input, as, class, range, generator object
 	Table below explains the difference between Python version 2 and Python version 3.
 
